@@ -1,71 +1,30 @@
 @import '../../styles/mixins.scss';
 
 .card {
-  max-width: 70%;
-  margin-bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--accent-primary);
+  color: var(--background-primary);
+  border-radius: toRem(8);
 
-  > div {
-    display: flex;
-    align-items: stretch;
-    gap: 1rem;
-    
-    > div:first-child {
-      position: relative;
-      display: flex;
-      flex-shrink: 0;
-      flex-direction: column;
-      justify-content: center;
+  &Wrapper {
+    @media (max-width: $media-breakpoint-XS) {
+      max-height: unset;
     }
-  }
+    height: toRem(500);
+    max-height: 55vh;
 
-  &ImageWrapper {
-    display: flex;
-    height: toRem(250);
-    min-width: toRem(250);
-    flex-grow: 1;
-    transition: transform 0.7s ease-in;
-    overflow: hidden;
-
-    &:hover {
+    + div {
+      padding: 1rem;
       
-      transform: scale(0.95);
-    }
-
-    img {
-      width: 100%;
-      object-position: center;
-      object-fit: cover;
-      transition: transform 0.7s ease-in-out;
-    
-      &:hover {
-        transform: scale(1.2);
+      h3 {
+        text-align: right;
+        margin-bottom: 1rem;
+        font-weight: 300;
+        font-size: toRem(26);
       }
     }
   }
-
-  p {
-    @include position(absolute, $bottom: 0, $right: 0);
-    display: flex;
-    gap: .2rem;
-  }
-
-  button {
-    visibility: hidden;
-  }
-
-  &Inverse {
-    flex-direction: row-reverse;
-
-    p {
-      right: unset;
-      left: 0;
-    }
-  }
-  
-  &:hover {
-
-    button {
-      visibility: visible;
-    }
-  }
 }
+
+

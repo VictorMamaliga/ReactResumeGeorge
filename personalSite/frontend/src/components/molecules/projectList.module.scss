@@ -1,41 +1,10 @@
 @import '../../styles/mixins.scss';
 
-.list {
-    padding: toRem(10) toRem(12);
-    border-radius: toRem(12);
-    max-width: min(85%, 1920px);
-    margin-top: 2rem;
-    margin-left: auto;
+.projectsList {
+    @media (min-width: $media-breakpoint-M) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: toRem(20);
 
-    &Right {
-        > div {
-            margin-left: auto;
-        }
     }
-
-    button {
-        display: block;
-        margin: 0 auto;
-    }
-
-    &Section {
-        height: unset;
-        min-height: 100vh;
-        
-        > h3 {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            
-            img {
-                width: 12rem;
-                filter: invert(44%) sepia(55%) saturate(451%) hue-rotate(349deg) brightness(88%) contrast(88%);
-            }
-        }
-    }
-}
-
-button {
-    @include roundButton();
-    padding: 1px toRem(20);
 }

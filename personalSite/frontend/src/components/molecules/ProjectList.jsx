@@ -1,30 +1,14 @@
 import styles from './projectList.module.scss';
-import ProjectCard from "./ProjectCard";
-import { ModalDataDispatchContext } from '../../contexts/ModalDataContext';
-import tattoo from '../../assets/tattoo.png';
-
-import { useContext } from 'react';
+import ProjectPreview from "./ProjectPreview";
 
 export default function ProjectList({ data, onToggleModal }) {
-    const dispatch = useContext(ModalDataDispatchContext);
-
-    const handleModalOpen = () => {
-        dispatch({ type: 'create' });
-        onToggleModal();
-    }
-
     return (
-        <section id='second' className={styles.listSection}>
-            <h3><img src={tattoo} />Work</h3>
-            <div className={styles.list}>
-                {data.map((row, rowOrder) => {
-                    return (
-                        <div key={rowOrder} className={rowOrder % 2 != 0 ? styles.listRight : null}>
-                            {row.map((card, order) => <ProjectCard key={card.id} card={card} order={order} rowOrder={rowOrder} onToggleModal={onToggleModal} />)}
-                        </div>
-                    )
-                })}
-                <button onClick={handleModalOpen}>New Project</button>
+        <section id='portofolio'>
+            <div className="container">
+                    <small>Featured Works.</small>
+                    <div className={styles.projectsList}>
+                        {data && data.map(card => card.isVisible && <ProjectPreview key={card.id} card={card} onToggleModal={onToggleModal} />)}
+                    </div>
             </div>
         </section>
     );

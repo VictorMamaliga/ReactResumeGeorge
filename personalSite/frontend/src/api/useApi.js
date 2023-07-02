@@ -1,53 +1,76 @@
 import { useEffect, useState } from "react";
 
-import { formatJSONStructure } from '../helpers';
+import { createType, deleteType, editType, fetcher, getProjectsURLType, visibilityType } from '../helpers';
 
 export default function useApi(modalData, handleAutoModalClose) {
-    const [projectsAPI, setProjectsAPI] = useState([]);
+    const [projectsAPI, setProjectsAPI] = useState(null);
     const [apiResponseStatus, setApiResponseStatus] = useState(false);
-    console.log(projectsAPI)
 
-    const handleOnSubmitForm = e => {
-        e.preventDefault();
-        const dataToSend = formatJSONStructure(modalData, e);
+    
+    const handleOnSubmitForm = async e => {
+        if (e) e.preventDefault();
+        
+        const response = await fetcher(modalData, e);
+        if (!response.ok) setApiResponseStatus(404);
 
-        fetch(dataToSend.url, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dataToSend.body)
-        }).then(r => {
-            setApiResponseStatus(r.status);
-            handleTimerModalClose()
-        }).catch(r => console.log(r.status))
+        if (response.ok) {
+            const responseJSON = await response.json();
+
+            switch (modalData.requestType) {
+                case createType: {
+                    setProjectsAPI([...projectsAPI, responseJSON]);
+                    break;
+                }
+                case editType: {
+                    const newList = projectsAPI.map(el => {
+                        if (el.id === responseJSON.id) {
+                            return { ...responseJSON }
+                        } else {
+                            return el
+                        }
+                    });
+                    setProjectsAPI(newList);
+                    break;
+                }
+                case deleteType: {
+                    const newList = projectsAPI.filter(e => e.id !== responseJSON.id);
+                    setProjectsAPI(newList);
+                    break;
+                }
+                case visibilityType: {
+                    const newList = projectsAPI.map(el => {
+                        if (el.id === responseJSON.id) {
+                            return { ...el, isVisible: !el.isVisible }
+                        } else {
+                            return el
+                        }
+                    })
+                    setProjectsAPI(newList);
+                    break;
+                }
+            }
+            setApiResponseStatus(201);
+            handleTimerModalClose();
+        }
     }
     
     function handleTimerModalClose() {
         setTimeout(() => {
             handleAutoModalClose();
             setApiResponseStatus(false);
-        }, 1500)
+        }, 1000)
     }
 
-    const handleApiResponseStatus = () => {
+    const handleModalStatusOff = () => {
         setApiResponseStatus(false);
     }
 
     useEffect(() => {
-        fetch('http://localhost:8080/api')
+        fetch(getProjectsURLType)
             .then(response => response.json())
-            .then(response => {
-                const packedData = [];
+            .then(response => setProjectsAPI(response))
+            .catch(err => console.log(err))
+    }, [])
 
-                while (response.length) {
-                    packedData.push(response.splice(0, 2))
-                }
-                setProjectsAPI(packedData)
-            })
-            .catch(err => console.log(err));
-    }, [apiResponseStatus])
-
-    return { projectsAPI, apiResponseStatus, handleOnSubmitForm, handleApiResponseStatus }
+    return { projectsAPI, apiResponseStatus, handleOnSubmitForm, handleModalStatusOff }
 }

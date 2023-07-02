@@ -1,56 +1,37 @@
+import React, { useContext } from 'react';
+
 import styles from './projectCard.module.scss';
-import { ModalDataDispatchContext } from '../../contexts/ModalDataContext';
+import { ModalDataContext } from '../../contexts/ModalDataContext';
 
-import { useContext } from 'react';
+const ProjectCard = ({ onToggleModal, onSubmitForm }) => {
+    const modalData = useContext(ModalDataContext);
 
-const ProfileCard = ({ card, order, rowOrder, onToggleModal }) => {
-  const dispatch = useContext(ModalDataDispatchContext);
-  const { id, name, description, imgURL, redirrect } = card;
+        if (modalData?.requestType === 'delete' || modalData?.requestType === 'visibility') {
+            return (
+                <div>
+                    <h4>Are you sure?</h4>
+                    <button onClick={onSubmitForm}>Yes</button>
+                    <button onClick={onToggleModal}>Cancel</button>
+                </div>
+            );
+        }
 
-  const handleEditCard = e => {
-    dispatch({
-      type: 'edit',
-      data: card,
-    });
-    
-    onToggleModal();
-  }
-  
-  const handleDeleteCard = () => {
-    dispatch({
-      type: 'delete',
-      id,
-    });
+        return modalData?.requestType === 'view' && (
+            <a href={modalData?.data?.redirrect} target='blank'>
+                <div className={styles.card}>
+                    <div className={styles.cardWrapper}>
+                        <img src={modalData?.data?.imgURL} />
+                    </div>
+                    <div className={styles.cardDetails}>
+                        <h3>{modalData?.data?.name}</h3>
+                        <div>
+                            <h4>{modalData?.data?.description}</h4>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        );
 
-    onToggleModal();
-  }
+}
 
-  const handleShuffle = () => {
-    if (rowOrder % 2 == 0) {
-      if (order) return "cardInverse";
-    } else {
-      if (!order) return "cardInverse"
-    }
-  }
-
-  return (
-    <div className={styles.card}>
-      <div className={styles[handleShuffle()]}>
-        <div>
-          <h2 className={styles.name}>{name}</h2>
-          <small className={styles.description}>{description}</small>
-          <p>
-            <button onClick={handleEditCard}>Edit</button>
-            <button onClick={handleDeleteCard}>Delete</button>
-          </p>
-        </div>
-        <a className={styles.cardImageWrapper} href={redirrect} target='_blank'>
-          <img src={imgURL} /> 
-        </a>
-      </div>
-    </div>
-  );
-};
-  
-
-export default ProfileCard;
+export default ProjectCard;

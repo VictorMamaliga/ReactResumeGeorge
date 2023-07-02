@@ -1,32 +1,26 @@
 @import '../../styles/mixins.scss';
 
 .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
+    @include position(fixed, $top: 0, $left: 0);
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--backbround-modal-overlay);
     display: flex;
     justify-content: center;
     align-items: center;
-
-    &Wrapper {
-        background-image: url('../../assets/papyrus.avif');
-    }
+    z-index: 33;
 
     &Close {
-        @include position(absolute, $top: 3.25rem, $right: 3rem);
+        @include position(absolute, $top: 1.37rem, $right: 1.37rem);
         border-radius: 50%;
         padding: toRem(2) toRem(7);
+        z-index: 1;
     }
     
     > div {
         position: relative;
-        background-color: white;
-        padding: 2em;
-        border-radius: 5px;
-        max-width: toRem(500);
-        width: 100%;
+        background-color: var(--backbround-modal-primary);
+        width: toRem(600);
+        border-radius: toRem(6);
     }
 }
